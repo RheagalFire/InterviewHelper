@@ -74,6 +74,21 @@ function initializeIpcHandlers(appState) {
     electron_1.ipcMain.handle("move-window-down", () => {
         appState.moveWindowDown();
     });
+    // Basic health endpoint info
+    electron_1.ipcMain.handle("get-health-endpoint", async () => {
+        try {
+            const healthPort = appState.healthService.getPort();
+            return {
+                status: "ok",
+                port: healthPort,
+                url: `http://localhost:${healthPort}`
+            };
+        }
+        catch (error) {
+            console.error("Error getting health status:", error);
+            return { status: "error", error: String(error) };
+        }
+    });
     electron_1.ipcMain.handle("quit-app", () => {
         electron_1.app.quit();
     });

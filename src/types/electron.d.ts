@@ -23,6 +23,14 @@ interface ElectronAPI {
   moveWindowUp: () => Promise<void>
   moveWindowDown: () => Promise<void>
   quitApp: () => Promise<void>
+  
+  // Simple health endpoint info
+  getHealthEndpoint: () => Promise<{ 
+    status: string
+    port?: number
+    url?: string
+    error?: string
+  }>
 }
 
 interface Window {

@@ -7,12 +7,14 @@ const WindowHelper_1 = require("./WindowHelper");
 const ScreenshotHelper_1 = require("./ScreenshotHelper");
 const shortcuts_1 = require("./shortcuts");
 const ProcessingHelper_1 = require("./ProcessingHelper");
+const HealthService_1 = require("./HealthService");
 class AppState {
     static instance = null;
     windowHelper;
     screenshotHelper;
     shortcutsHelper;
     processingHelper;
+    healthService;
     // View management
     view = "queue";
     problemInfo = null; // Allow null
@@ -41,6 +43,8 @@ class AppState {
         this.processingHelper = new ProcessingHelper_1.ProcessingHelper(this);
         // Initialize ShortcutsHelper
         this.shortcutsHelper = new shortcuts_1.ShortcutsHelper(this);
+        // Initialize HealthService
+        this.healthService = new HealthService_1.HealthService(this);
     }
     static getInstance() {
         if (!AppState.instance) {
@@ -140,6 +144,8 @@ async function initializeApp() {
     const appState = AppState.getInstance();
     // Initialize IPC handlers before window creation
     (0, ipcHandlers_1.initializeIpcHandlers)(appState);
+    // Start health service
+    appState.healthService.start();
     electron_1.app.whenReady().then(() => {
         console.log("App is ready");
         appState.createWindow();
@@ -157,6 +163,10 @@ async function initializeApp() {
         if (process.platform !== "darwin") {
             electron_1.app.quit();
         }
+    });
+    electron_1.app.on("will-quit", () => {
+        // Stop health service when app is about to quit
+        appState.healthService.stop();
     });
     electron_1.app.dock?.hide(); // Hide dock icon (optional)
     electron_1.app.commandLine.appendSwitch("disable-background-timer-throttling");

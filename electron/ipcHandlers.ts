@@ -87,6 +87,21 @@ export function initializeIpcHandlers(appState: AppState): void {
     appState.moveWindowDown()
   })
 
+  // Basic health endpoint info
+  ipcMain.handle("get-health-endpoint", async () => {
+    try {
+      const healthPort = appState.healthService.getPort()
+      return { 
+        status: "ok", 
+        port: healthPort,
+        url: `http://localhost:${healthPort}`
+      }
+    } catch (error) {
+      console.error("Error getting health status:", error)
+      return { status: "error", error: String(error) }
+    }
+  })
+
   ipcMain.handle("quit-app", () => {
     app.quit()
   })

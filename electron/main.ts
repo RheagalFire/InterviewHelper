@@ -4,6 +4,7 @@ import { WindowHelper } from "./WindowHelper"
 import { ScreenshotHelper } from "./ScreenshotHelper"
 import { ShortcutsHelper } from "./shortcuts"
 import { ProcessingHelper } from "./ProcessingHelper"
+import { HealthService } from "./HealthService"
 
 export class AppState {
   private static instance: AppState | null = null
@@ -12,6 +13,7 @@ export class AppState {
   private screenshotHelper: ScreenshotHelper
   public shortcutsHelper: ShortcutsHelper
   public processingHelper: ProcessingHelper
+  public healthService: HealthService
 
   // View management
   private view: "queue" | "solutions" = "queue"
@@ -56,6 +58,9 @@ export class AppState {
 
     // Initialize ShortcutsHelper
     this.shortcutsHelper = new ShortcutsHelper(this)
+
+    // Initialize HealthService
+    this.healthService = new HealthService(this)
   }
 
   public static getInstance(): AppState {
@@ -193,6 +198,9 @@ async function initializeApp() {
   // Initialize IPC handlers before window creation
   initializeIpcHandlers(appState)
 
+  // Start health service
+  appState.healthService.start()
+
   app.whenReady().then(() => {
     console.log("App is ready")
     appState.createWindow()
@@ -212,6 +220,11 @@ async function initializeApp() {
     if (process.platform !== "darwin") {
       app.quit()
     }
+  })
+
+  app.on("will-quit", () => {
+    // Stop health service when app is about to quit
+    appState.healthService.stop()
   })
 
   app.dock?.hide() // Hide dock icon (optional)

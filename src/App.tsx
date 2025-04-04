@@ -4,6 +4,7 @@ import { ToastViewport } from "@radix-ui/react-toast"
 import { useEffect, useRef, useState } from "react"
 import Solutions from "./_pages/Solutions"
 import { QueryClient, QueryClientProvider } from "react-query"
+import HealthStatus from "./components/HealthStatus"
 
 // Using globally defined ElectronAPI interface from types/electron.d.ts
 
@@ -19,6 +20,7 @@ const queryClient = new QueryClient({
 const App: React.FC = () => {
   const [view, setView] = useState<"queue" | "solutions" | "debug">("queue")
   const containerRef = useRef<HTMLDivElement>(null)
+  const [showHealthEndpoint, setShowHealthEndpoint] = useState(false)
 
   // Effect for height monitoring
   useEffect(() => {
@@ -72,7 +74,7 @@ const App: React.FC = () => {
       resizeObserver.disconnect()
       mutationObserver.disconnect()
     }
-  }, [view]) // Re-run when view changes
+  }, [view, showHealthEndpoint]) // Re-run when view or health status changes
 
   useEffect(() => {
     const cleanupFunctions = [
@@ -120,6 +122,23 @@ const App: React.FC = () => {
           ) : (
             <></>
           )}
+          
+          {showHealthEndpoint && (
+            <div className="fixed bottom-4 right-4 w-80 z-50">
+              <HealthStatus />
+            </div>
+          )}
+          
+          <div className="fixed right-2 bottom-2">
+            <button
+              onClick={() => setShowHealthEndpoint(!showHealthEndpoint)}
+              className="text-xs bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-full p-1 px-2 opacity-70 hover:opacity-100"
+              title="Toggle Health Endpoint Info"
+            >
+              {showHealthEndpoint ? 'Hide' : 'Health'}
+            </button>
+          </div>
+          
           <ToastViewport />
         </ToastProvider>
       </QueryClientProvider>

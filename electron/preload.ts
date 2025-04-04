@@ -35,6 +35,14 @@ interface ElectronAPI {
   moveWindowUp: () => Promise<void>
   moveWindowDown: () => Promise<void>
   quitApp: () => Promise<void>
+  
+  // Simple health endpoint info
+  getHealthEndpoint: () => Promise<{ 
+    status: string
+    port?: number
+    url?: string
+    error?: string
+  }>
 }
 
 export const PROCESSING_EVENTS = {
@@ -167,5 +175,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
   moveWindowRight: () => ipcRenderer.invoke("move-window-right"),
   moveWindowUp: () => ipcRenderer.invoke("move-window-up"),
   moveWindowDown: () => ipcRenderer.invoke("move-window-down"),
-  quitApp: () => ipcRenderer.invoke("quit-app")
+  quitApp: () => ipcRenderer.invoke("quit-app"),
+  
+  // Simple health endpoint info
+  getHealthEndpoint: () => ipcRenderer.invoke("get-health-endpoint")
 } as ElectronAPI)
