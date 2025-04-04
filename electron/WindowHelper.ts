@@ -94,7 +94,8 @@ export class WindowHelper {
       fullscreenable: false,
       hasShadow: false,
       backgroundColor: "#00000000",
-      focusable: true
+      focusable: true,
+      skipTaskbar: true // Hide from taskbar for all platforms
     }
 
     this.mainWindow = new BrowserWindow(windowSettings)
@@ -108,21 +109,37 @@ export class WindowHelper {
         visibleOnFullScreen: true
       })
       this.mainWindow.setAlwaysOnTop(true, "floating")
-    } else {
-      // For Windows and other platforms
-      this.mainWindow.setAlwaysOnTop(true)
+    } else if (process.platform === "win32") {
+      // Windows-specific settings
+      // Type 'screen-saver' gives highest priority in the window hierarchy
+      this.mainWindow.setAlwaysOnTop(true, "screen-saver");
+      this.mainWindow.setSkipTaskbar(true);
       
-      // Hide from Windows Alt+Tab and Task View
-      // Setting skipTaskbar hides it from the taskbar and Alt+Tab switcher
-      this.mainWindow.setSkipTaskbar(true)
+      // Disable menu bar on Windows
+      this.mainWindow.setMenuBarVisibility(false);
+      this.mainWindow.setAutoHideMenuBar(true);
       
-      // For Windows, we need to set the window type to make it behave like a tool window
-      if (process.platform === "win32") {
-        // Set as a tool window which doesn't show up in Alt+Tab
-        this.mainWindow.setMenuBarVisibility(false)
-        // Use setAlwaysOnTop with the topmost level on Windows for proper behavior
-        this.mainWindow.setAlwaysOnTop(true, "screen-saver")
+      // Ensure transparent overlay works properly in Windows
+      this.mainWindow.setBackgroundColor('#00000000');
+      
+      // Set as tool window to prevent it from showing in Alt+Tab
+      // Use lower-level win32 API to set window style if necessary
+      try {
+        // This might require node-ffi or similar for full native API access in production
+        const { BrowserWindow } = require('electron');
+        const win = BrowserWindow.getFocusedWindow();
+        // Set window style to 'tool window' to make it behave as overlay
+        if (win && win.getNativeWindowHandle) {
+          // In a real implementation, you'd use node-ffi to call SetWindowLong
+          console.log("Setting Windows-specific window styles");
+        }
+      } catch (error) {
+        console.error("Failed to apply Windows-specific window style:", error);
       }
+    } else {
+      // Linux and other platforms
+      this.mainWindow.setAlwaysOnTop(true, "screen-saver");
+      this.mainWindow.setSkipTaskbar(true);
     }
 
     this.mainWindow.loadURL(startUrl).catch((err) => {

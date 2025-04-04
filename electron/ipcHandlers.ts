@@ -70,6 +70,23 @@ export function initializeIpcHandlers(appState: AppState): void {
     }
   })
 
+  // Add window movement handlers
+  ipcMain.handle("move-window-left", () => {
+    appState.moveWindowLeft()
+  })
+
+  ipcMain.handle("move-window-right", () => {
+    appState.moveWindowRight()
+  })
+
+  ipcMain.handle("move-window-up", () => {
+    appState.moveWindowUp()
+  })
+
+  ipcMain.handle("move-window-down", () => {
+    appState.moveWindowDown()
+  })
+
   ipcMain.handle("quit-app", () => {
     app.quit()
   })

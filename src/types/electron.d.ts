@@ -20,6 +20,8 @@ interface ElectronAPI {
   takeScreenshot: () => Promise<void>
   moveWindowLeft: () => Promise<void>
   moveWindowRight: () => Promise<void>
+  moveWindowUp: () => Promise<void>
+  moveWindowDown: () => Promise<void>
   quitApp: () => Promise<void>
 }
 

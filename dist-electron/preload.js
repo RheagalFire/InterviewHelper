@@ -108,6 +108,8 @@ electron_1.contextBridge.exposeInMainWorld("electronAPI", {
     },
     moveWindowLeft: () => electron_1.ipcRenderer.invoke("move-window-left"),
     moveWindowRight: () => electron_1.ipcRenderer.invoke("move-window-right"),
+    moveWindowUp: () => electron_1.ipcRenderer.invoke("move-window-up"),
+    moveWindowDown: () => electron_1.ipcRenderer.invoke("move-window-down"),
     quitApp: () => electron_1.ipcRenderer.invoke("quit-app")
 });
 //# sourceMappingURL=preload.js.map

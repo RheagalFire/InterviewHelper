@@ -61,6 +61,19 @@ function initializeIpcHandlers(appState) {
             return { success: false, error: error.message };
         }
     });
+    // Add window movement handlers
+    electron_1.ipcMain.handle("move-window-left", () => {
+        appState.moveWindowLeft();
+    });
+    electron_1.ipcMain.handle("move-window-right", () => {
+        appState.moveWindowRight();
+    });
+    electron_1.ipcMain.handle("move-window-up", () => {
+        appState.moveWindowUp();
+    });
+    electron_1.ipcMain.handle("move-window-down", () => {
+        appState.moveWindowDown();
+    });
     electron_1.ipcMain.handle("quit-app", () => {
         electron_1.app.quit();
     });

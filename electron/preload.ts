@@ -32,6 +32,8 @@ interface ElectronAPI {
   takeScreenshot: () => Promise<void>
   moveWindowLeft: () => Promise<void>
   moveWindowRight: () => Promise<void>
+  moveWindowUp: () => Promise<void>
+  moveWindowDown: () => Promise<void>
   quitApp: () => Promise<void>
 }
 
@@ -163,5 +165,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   },
   moveWindowLeft: () => ipcRenderer.invoke("move-window-left"),
   moveWindowRight: () => ipcRenderer.invoke("move-window-right"),
+  moveWindowUp: () => ipcRenderer.invoke("move-window-up"),
+  moveWindowDown: () => ipcRenderer.invoke("move-window-down"),
   quitApp: () => ipcRenderer.invoke("quit-app")
 } as ElectronAPI)
